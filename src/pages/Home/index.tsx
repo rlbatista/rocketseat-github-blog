@@ -1,8 +1,9 @@
 import { HeaderCard } from '../../components/HeaderCard'
 import logoSvg from '../../assets/logo.svg'
-import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, SearchHeaderContainer, SocialFooter, TextContainer } from './styles'
+import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, PostContainer, SearchHeaderContainer, SocialFooter, TextContainer } from './styles'
 import { IconBuilding, IconGithub, IconUpRight, IconUserGroup } from '../../components/Icons'
 import { Link } from 'react-router-dom'
+import { Card } from '../../components/Card'
 
 export function Home() {
     return (
@@ -42,6 +43,13 @@ export function Home() {
                 </div>
                 <input type="text" placeholder='Buscar Conteúdo'/>
             </SearchHeaderContainer>
+
+            <PostContainer>
+                <Card />
+                <Card />
+                <Card />
+                <Card />
+            </PostContainer>
         </>
     )
 }

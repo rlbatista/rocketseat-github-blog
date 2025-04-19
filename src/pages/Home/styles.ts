@@ -83,6 +83,7 @@ export const SocialFooter = styled.ul`
 
 export const SearchHeaderContainer = styled.div`
     width: 100%;
+    margin-bottom: 3rem;
 
     & div {
         display: flex;
@@ -117,4 +118,10 @@ export const SearchHeaderContainer = styled.div`
             border-color: ${props => props.theme.colorBlue};
         }
     }
+`
+
+export const PostContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+    gap: 2rem;
 `
