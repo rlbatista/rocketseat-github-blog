@@ -3,6 +3,7 @@ import logoSvg from '../../assets/logo.svg'
 import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, PostContainer, SearchHeaderContainer, SocialFooter, TextContainer } from './styles'
 import { IconBuilding, IconGithub, IconUpRight, IconUserGroup } from '../../components/Icons'
 import { Link } from 'react-router-dom'
+import { AnimatedLink } from '../../components/AnimatedLink'
 import { Card } from '../../components/Card'
 
 export function Home() {
@@ -16,10 +17,12 @@ export function Home() {
                         <HeaderContainer>
                             <HeaderText>Cameron Williamson</HeaderText> 
                             <Link to="/">
-                                github
-                                <span>
-                                    <IconUpRight />
-                                </span>
+                                <AnimatedLink>
+                                    github
+                                    <span>
+                                        <IconUpRight />
+                                    </span>
+                                </AnimatedLink>
                             </Link>
                         </HeaderContainer>
                         <DescriptionText>
