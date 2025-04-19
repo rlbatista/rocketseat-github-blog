@@ -80,3 +80,41 @@ export const SocialFooter = styled.ul`
         gap: 0.5rem;
     }
 `
+
+export const SearchHeaderContainer = styled.div`
+    width: 100%;
+
+    & div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & h2 {
+            font: ${props => props.theme.fontTitleSb};
+            color: ${props => props.theme.colorBaseSubtitle};
+        }
+
+        & span {
+            font: ${props => props.theme.fontTextSr};
+            color: ${props => props.theme.colorBaseSpan};
+        }
+    }
+
+    & input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid ${props => props.theme.colorBaseBorder};
+        border-radius: 6px;
+        background-color: ${props => props.theme.colorBaseInput};
+        box-sizing: border-box;
+        margin-top: 0.75rem;
+
+        &::placeholder {
+            color: ${props => props.theme.colorBaseLabel};
+        }
+
+        &:focus {
+            border-color: ${props => props.theme.colorBlue};
+        }
+    }
+`

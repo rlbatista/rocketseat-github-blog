@@ -1,6 +1,6 @@
 import { HeaderCard } from '../../components/HeaderCard'
 import logoSvg from '../../assets/logo.svg'
-import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, SocialFooter, TextContainer } from './styles'
+import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, SearchHeaderContainer, SocialFooter, TextContainer } from './styles'
 import { IconBuilding, IconGithub, IconUpRight, IconUserGroup } from '../../components/Icons'
 import { Link } from 'react-router-dom'
 
@@ -34,6 +34,14 @@ export function Home() {
                     </TextContainer>
                 </HomeContainer>
             </HeaderCard>
+
+            <SearchHeaderContainer>
+                <div>
+                    <h2>Publicações</h2>
+                    <span>6 publicações</span>
+                </div>
+                <input type="text" placeholder='Buscar Conteúdo'/>
+            </SearchHeaderContainer>
         </>
     )
 }
