@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const LinkContainer = styled.a`
+export const LinkContainer = styled.div`
     position: relative;
     display: flex;
     align-items: center;
