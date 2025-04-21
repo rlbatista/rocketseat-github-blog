@@ -1,22 +1,47 @@
 import { HeaderCard } from '../../components/HeaderCard'
-import logoSvg from '../../assets/logo.svg'
 import { Avatar, DescriptionText, HeaderContainer, HeaderText, HomeContainer, PostContainer, SearchHeaderContainer, SocialFooter, TextContainer } from './styles'
 import { IconBuilding, IconGithub, IconUpRight, IconUserGroup } from '../../components/Icons'
 import { Link } from 'react-router-dom'
 import { AnimatedLink } from '../../components/AnimatedLink'
 import { Card } from '../../components/Card'
+import { useEffect, useState } from 'react'
+import { gitHubApi, GithubProfile } from '../../lib/api'
+import { configs } from '../../utils/configs'
 
 export function Home() {
+    const [ profile, setProfile ] = useState<GithubProfile>({} as GithubProfile)
+
+    async function loadProfile() {
+        const profileData = await gitHubApi.getProfile(configs.getGithubAccount())
+
+        const newGithubProfile = {
+            name: profileData.name,
+            avatar_url: profileData.avatar_url,
+            bio: profileData.bio,
+            company: profileData.company,
+            created_at: profileData.created_at,
+            followers: profileData.followers,
+            html_url: profileData.html_url,
+            login: profileData.login
+        }
+
+        setProfile(newGithubProfile)
+    }
+
+    useEffect(() => {
+        loadProfile()
+    }, [])
+
     return (
         <>
             <HeaderCard>
                 <HomeContainer>
-                    <Avatar src={logoSvg} alt="" />
+                    <Avatar src={profile.avatar_url} alt="" />
                     
                     <TextContainer>
                         <HeaderContainer>
-                            <HeaderText>Cameron Williamson</HeaderText> 
-                            <Link to="/">
+                            <HeaderText>{profile.name}</HeaderText> 
+                            <Link to={profile.html_url} target='_blank'>
                                 <AnimatedLink>
                                     github
                                     <span>
@@ -26,13 +51,13 @@ export function Home() {
                             </Link>
                         </HeaderContainer>
                         <DescriptionText>
-                            Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu viverra massa quam dignissim aenean malesuada suscipit. Nunc, volutpat pulvinar vel mass.
+                            {profile.bio}
                         </DescriptionText>
                         <div>
                             <SocialFooter>
-                                <li><IconGithub /> <span>cameronwll</span></li>
-                                <li><IconBuilding /> <span>Rocketseat</span></li>
-                                <li><IconUserGroup /> <span>32 seguidores</span></li>
+                                <li><IconGithub /> <span>{profile.login}</span></li>
+                                <li><IconBuilding /> <span>{profile.company}</span></li>
+                                <li><IconUserGroup /> <span>{profile.followers} seguidor(es)</span></li>
                             </SocialFooter>
                         </div>
                     </TextContainer>
