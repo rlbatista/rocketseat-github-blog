@@ -7,6 +7,12 @@ export const CardContainer = styled.div`
     border-radius: 10px;
     padding: 2rem;
     height: 16.25rem;
+    border: 2px solid transparent;
+    transition: border 0.2s ease;
+
+    &:hover {
+        border: 2px solid ${props => props.theme.colorBaseLabel};
+    }
 `
 
 export const CardHeaderContainer = styled.div`
