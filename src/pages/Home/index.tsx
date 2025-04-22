@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom'
 import { AnimatedLink } from '../../components/AnimatedLink'
 import { Card } from '../../components/Card'
 import { useEffect, useState } from 'react'
-import { gitHubApi, GithubProfile } from '../../lib/api'
-import { configs } from '../../utils/configs'
+import { gitHubApi, GithubIssuesItem, GithubProfile } from '../../lib/api'
 
 export function Home() {
     const [ profile, setProfile ] = useState<GithubProfile>({} as GithubProfile)
+    const [ issues, setIssues ] = useState<GithubIssuesItem[]>([] as GithubIssuesItem[])
 
     async function loadProfile() {
-        const profileData = await gitHubApi.getProfile(configs.getGithubAccount())
+        const profileData = await gitHubApi.getProfile()
 
         const newGithubProfile = {
             name: profileData.name,
@@ -28,8 +28,35 @@ export function Home() {
         setProfile(newGithubProfile)
     }
 
+    async function loadIssues() {
+        const issuesData = await gitHubApi.getIssues()
+        const items = issuesData.items.map(issue => {
+            return {
+                title: issue.title,
+                number: issue.number,
+                body: issue.body,
+                created_at: new Date(issue.created_at)
+            }
+        })
+        console.log(issuesData)
+        setIssues(items)
+    }
+
+    const numberOfPublications: string = ((n) => {
+        if(n === 0) {
+            return 'Nenhuma publicação'
+        }
+
+        if(n === 1) {
+            return '1 publicação'
+        }
+
+        return `${n} publicações`
+    })(issues.length)
+
     useEffect(() => {
         loadProfile()
+        loadIssues()
     }, [])
 
     return (
@@ -40,7 +67,7 @@ export function Home() {
                     
                     <TextContainer>
                         <HeaderContainer>
-                            <HeaderText>{profile.name}</HeaderText> 
+                            <HeaderText>{profile.name || profile.login}</HeaderText> 
                             <Link to={profile.html_url} target='_blank'>
                                 <AnimatedLink>
                                     github
@@ -67,16 +94,17 @@ export function Home() {
             <SearchHeaderContainer>
                 <div>
                     <h2>Publicações</h2>
-                    <span>6 publicações</span>
+                    <span>{numberOfPublications}</span>
                 </div>
                 <input type="text" placeholder='Buscar Conteúdo'/>
             </SearchHeaderContainer>
 
             <PostContainer>
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+                {issues.map((issue) => (
+                    <Link to={`/detail/${issue.number}`}>
+                        <Card key={issue.number} title={issue.title} content={issue.body} date={issue.created_at}/>
+                    </Link>
+                ))}
             </PostContainer>
         </>
     )

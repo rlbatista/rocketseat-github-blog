@@ -12,6 +12,7 @@ export const CardContainer = styled.div`
 
     &:hover {
         border: 2px solid ${props => props.theme.colorBaseLabel};
+        cursor: pointer;
     }
 `
 

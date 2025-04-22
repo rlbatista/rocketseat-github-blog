@@ -1,15 +1,21 @@
 import { CardContainer, CardHeaderContainer, CardTextContainer } from "./styles";
 
-export function Card() {
+interface CardProps {
+    title: string,
+    content: string,
+    date: Date
+}
+
+export function Card({title, content, date}: CardProps) {
     return (
         <CardContainer>
             <CardHeaderContainer>
-                <h1>JavaScript data types and data structures</h1>
-                <h2>Há 1 dia</h2>
+                <h1>{title}</h1>
+                <h2>{date.toISOString()}</h2>
             </CardHeaderContainer>
 
             <CardTextContainer>
-                Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.
+                {content}
             </CardTextContainer>
         </CardContainer>
     )
