@@ -24,15 +24,41 @@ export interface GithubProfile {
     login: string
 }
 
+export interface GithubIssuesItem {
+  title: string,
+  number: number,
+  body: string,
+  created_at: Date
+}
+
+export interface GithubIssues {
+  items: GithubIssuesItem[]
+}
+
 export const gitHubApi = {
-  getProfile: async function(username: string) {
+  getProfile: async function() {
     try {
-      const ghProfile = await api.get<GithubProfile>(`/users/${username}`)
+      const ghProfile = await api.get<GithubProfile>(`/users/${configs.getGithubAccount()}`)
       return ghProfile.data
 
     } catch(error) {
       console.error(error)
-      throw new Error(`Não foi possível carregar o perfil do ${username}`)
+      throw new Error(`Não foi possível carregar o perfil do ${configs.getGithubAccount()}`)
+    }
+  },
+
+  getIssues: async function(query: string = ' ') {
+    try {
+      const ghIssues = await api.get<GithubIssues>(`/search/issues`, {
+        params: {
+          'q': `${query}repo:${configs.getGithubAccount()}/${configs.getGithubRepo()}`
+        }
+      })
+      return ghIssues.data
+
+    } catch(error) {
+      console.error(error)
+      throw new Error(`Não foi possível carregar as issues do repo ${configs.getGithubAccount()}/${configs.getGithubRepo()}`)
     }
   }
 }
