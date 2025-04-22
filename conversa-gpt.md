@@ -2389,3 +2389,173 @@ Agora você tem uma estrutura bem organizada para acessar variáveis de ambiente
 
 Se tiver mais alguma dúvida ou quiser explorar algum outro ponto, é só chamar!
 ---
+
+# Pergunta
+
+gpt, estou em um projeto react, iniciado através do vite, com typescript, styled components e axios. estou tentando consumir a api de issues do github, porém estou tomando erro de cors. o endreço inteiro que estou tentando consultar é esse aqui
+
+https://api.github.com/search/issues?q=%20%20%repo:fulano/repo-do-fulano
+
+e essa chamada está tomando o seguinte erro:
+
+Access to XMLHttpRequest at 'https://api.github.com/search/issues?q=%20%20%repo:rlbatista/rocketseat-github-blog' from origin 'http://localhost:5173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+alguma ideia de como resolver ? eu já incluí o cabeçalho "'Access-Control-Allow-Origin': '*'", porém não resolveu o problema.
+traga-me um passo a passo de como resolver esse problema.
+
+# Reposta
+
+O erro de **CORS** (Cross-Origin Resource Sharing) ocorre quando o navegador bloqueia uma requisição feita de um domínio diferente (neste caso, de `http://localhost:5173` para `https://api.github.com`) por questões de segurança. Quando você está desenvolvendo no **localhost** e tentando acessar uma API de outro domínio, o servidor da API precisa permitir explicitamente essas requisições através dos cabeçalhos **CORS**.
+
+### Passo a passo para resolver o problema de CORS
+
+#### 1. **Entender o CORS no GitHub**
+O **GitHub API** já envia um cabeçalho `Access-Control-Allow-Origin` adequado para permitir o acesso de qualquer origem (desde que a requisição seja feita corretamente). Porém, você não pode adicionar manualmente os cabeçalhos `Access-Control-Allow-Origin` ou `Access-Control-Allow-Methods` em seu lado de cliente (navegador). Esses cabeçalhos precisam ser enviados pelo servidor da API — ou seja, o GitHub, no seu caso.
+
+O erro que você está recebendo está acontecendo porque o GitHub não está permitindo requisições de origens diferentes quando feitas diretamente do navegador. Isso é um comportamento esperado em APIs públicas.
+
+#### 2. **Soluções para contornar o erro CORS**
+
+Existem algumas abordagens que você pode seguir para resolver esse erro durante o desenvolvimento:
+
+### **Opção 1: Usar um Proxy no Vite**
+
+O **Vite** oferece uma maneira de contornar o problema de CORS durante o desenvolvimento. Você pode configurar o **Vite** para redirecionar suas requisições para o GitHub API através de um servidor local (proxy). Isso faz com que as requisições de API pareçam vir do mesmo domínio (o servidor Vite), evitando o bloqueio de CORS.
+
+Para fazer isso, basta adicionar uma configuração de proxy no arquivo `vite.config.ts`:
+
+1. **Configuração do Proxy no Vite:**
+
+   Abra o arquivo `vite.config.ts` e adicione a configuração de proxy para a URL do GitHub API:
+
+   ```typescript
+   import { defineConfig } from 'vite';
+
+   export default defineConfig({
+     server: {
+       proxy: {
+         '/api': {
+           target: 'https://api.github.com',
+           changeOrigin: true,
+           rewrite: (path) => path.replace(/^\/api/, ''),
+         },
+       },
+     },
+   });
+   ```
+
+2. **Alterando a URL da requisição**
+
+   Depois de configurar o proxy, altere sua URL para que ela passe a fazer as requisições para o `localhost:5173/api`, que será redirecionado para o GitHub API:
+
+   ```typescript
+   const response = await axios.get('/api/search/issues', {
+     params: {
+       q: '%20%20%repo:rlbatista/rocketseat-github-blog',
+     },
+   });
+   ```
+
+   Com isso, o Vite vai interceptar as requisições para `/api` e encaminhá-las para o GitHub, evitando o problema de CORS.
+
+3. **Por que funciona?**
+   O **Vite proxy** faz com que a requisição pareça ser originada do mesmo servidor (`localhost:5173`), contornando o bloqueio CORS do navegador.
+
+---
+
+### **Opção 2: Usar um Servidor Backend como Proxy**
+
+Se você não quer mexer na configuração do Vite ou se precisa de algo mais robusto, pode criar um servidor backend que atue como um proxy entre o seu frontend e a API do GitHub. Esse backend pode ser simples e pode usar o **Express.js** ou qualquer outro framework para facilitar.
+
+1. **Criação de um servidor Express simples (com Node.js):**
+
+   Primeiro, crie um servidor backend básico com **Express.js**:
+
+   ```bash
+   npm init -y
+   npm install express axios
+   ```
+
+   Crie um arquivo chamado `server.js` ou `index.js`:
+
+   ```javascript
+   const express = require('express');
+   const axios = require('axios');
+
+   const app = express();
+   const PORT = 5000;
+
+   // Habilitando CORS
+   const cors = require('cors');
+   app.use(cors());
+
+   app.get('/github/issues', async (req, res) => {
+     const { q } = req.query;
+     try {
+       const response = await axios.get(`https://api.github.com/search/issues`, {
+         params: { q },
+       });
+       res.json(response.data);
+     } catch (error) {
+       res.status(500).send('Erro ao acessar a API do GitHub');
+     }
+   });
+
+   app.listen(PORT, () => {
+     console.log(`Servidor rodando na porta ${PORT}`);
+   });
+   ```
+
+2. **Alterando sua chamada de API no React:**
+
+   Agora, altere sua requisição para ir até o servidor backend que você acabou de criar:
+
+   ```typescript
+   const response = await axios.get('http://localhost:5000/github/issues', {
+     params: {
+       q: '%20%20%repo:rlbatista/rocketseat-github-blog',
+     },
+   });
+   ```
+
+3. **Por que funciona?**
+   O seu backend **Express** está no mesmo domínio do frontend (localhost), então não há problemas de CORS entre o frontend e o backend. O backend então faz a requisição para o GitHub, que não tem problemas de CORS com servidores externos.
+
+---
+
+### **Opção 3: Usar uma API do GitHub que Não Tenha CORS (API do GitHub com Token de Acesso)**
+
+O GitHub permite que você autentique suas requisições usando um **token de acesso pessoal** (PAT - Personal Access Token), o que pode fazer com que o CORS não seja mais um problema.
+
+1. **Gerar um token de acesso pessoal no GitHub:**
+   - Vá para [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens).
+   - Gere um token com permissões mínimas necessárias (acesso público à API do GitHub).
+
+2. **Incluir o token na requisição:**
+
+   No frontend, inclua o token no cabeçalho da sua requisição:
+
+   ```typescript
+   const response = await axios.get('https://api.github.com/search/issues', {
+     headers: {
+       Authorization: `Bearer ${YOUR_GITHUB_TOKEN}`,
+     },
+     params: {
+       q: '%20%20%repo:rlbatista/rocketseat-github-blog',
+     },
+   });
+   ```
+
+3. **Por que funciona?**
+   A autenticação com o token de acesso pode permitir que o GitHub API não bloqueie suas requisições devido ao CORS, especialmente para requisições autenticadas, já que você está autenticado com o token.
+
+---
+
+### Conclusão
+
+A solução mais simples para o seu caso seria usar a **Opção 1**, que é configurar o **proxy** no Vite. Isso permite que você desenvolva localmente sem ter que lidar com problemas de CORS, pois as requisições são feitas para o servidor local que redireciona para o GitHub.
+
+Se você preferir ou precisar de algo mais robusto, a **Opção 2** de usar um backend também é uma boa escolha. E, para produções mais complexas, a **Opção 3** pode ser útil, especialmente se você precisar de uma autenticação mais robusta para acessar a API do GitHub.
+
+Se precisar de mais alguma coisa ou ajuda com algum dos passos, me avise!
+---
