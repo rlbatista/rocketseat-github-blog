@@ -35,10 +35,9 @@ export function Home() {
                 title: issue.title,
                 number: issue.number,
                 body: issue.body,
-                created_at: new Date(issue.created_at)
+                created_at: issue.created_at
             }
         })
-        console.log(issuesData)
         setIssues(items)
     }
 
@@ -101,8 +100,8 @@ export function Home() {
 
             <PostContainer>
                 {issues.map((issue) => (
-                    <Link to={`/detail/${issue.number}`}>
-                        <Card key={issue.number} title={issue.title} content={issue.body} date={issue.created_at}/>
+                    <Link key={issue.number} to={`/detail/${issue.number}`}>
+                        <Card title={issue.title} content={issue.body} date={new Date(issue.created_at)}/>
                     </Link>
                 ))}
             </PostContainer>
