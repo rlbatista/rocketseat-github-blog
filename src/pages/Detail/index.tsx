@@ -87,7 +87,7 @@ export function Detail() {
                             <IconCalendarDay />
                             <span>
                                 <time dateTime={issue.created_at} 
-                                      title={formatRFC7231(issue.created_at)}>
+                                      title={issue.created_at && formatRFC7231(issue.created_at)}>
                                     {issue.created_at && formatDistanceToNow(new Date(issue.created_at), {addSuffix: true})}
                                 </time>
                             </span>
