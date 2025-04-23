@@ -50,7 +50,11 @@ export const gitHubApi = {
     }
   },
 
-  getIssues: async function(query: string = ' ') {
+  getIssues: async function(query: string = '') {
+    if(query) {
+       query = `${query} `
+    }
+
     try {
       const ghIssues = await api.get<GithubIssues>(`/search/issues`, {
         params: {
