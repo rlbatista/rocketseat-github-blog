@@ -28,7 +28,10 @@ export interface GithubIssuesItem {
   title: string,
   number: number,
   body: string,
-  created_at: Date
+  created_at: string,
+  html_url?: string,
+  comments?: number,
+  user?: {login: string},
 }
 
 export interface GithubIssues {
@@ -59,6 +62,17 @@ export const gitHubApi = {
     } catch(error) {
       console.error(error)
       throw new Error(`Não foi possível carregar as issues do repo ${configs.getGithubAccount()}/${configs.getGithubRepo()}`)
+    }
+  },
+
+  getIssue: async function(number: number) {
+    try {
+      const issue = await api.get<GithubIssuesItem>(`repos/${configs.getGithubAccount()}/${configs.getGithubRepo()}/issues/${number}`)
+      return issue.data
+
+    } catch(error) {
+      console.log(error)
+      throw new Error(`Não foi possível carregar o issue de número ${number}`)
     }
   }
 }
