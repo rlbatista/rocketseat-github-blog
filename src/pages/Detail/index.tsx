@@ -5,8 +5,12 @@ import { Link, useParams } from "react-router-dom";
 import { gitHubApi, GithubIssuesItem } from "../../lib/api";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import { formatDistanceToNow, formatRFC7231, setDefaultOptions } from 'date-fns'
+import { ptBR } from 'date-fns/locale/pt-BR'
 
 export function Detail() {
+    setDefaultOptions({locale: ptBR})
+
     const { number } = useParams()
     const [ issue, setIssue ] = useState<GithubIssuesItem>({} as GithubIssuesItem)
 
@@ -79,7 +83,15 @@ export function Detail() {
                 <div>
                     <DetailCardFooter>
                         <li><IconGithub /> <span>{issue.user?.login}</span></li>
-                        <li><IconCalendarDay /> <span>{issue.created_at}</span></li>
+                        <li>
+                            <IconCalendarDay />
+                            <span>
+                                <time dateTime={issue.created_at} 
+                                      title={formatRFC7231(issue.created_at)}>
+                                    {issue.created_at && formatDistanceToNow(new Date(issue.created_at), {addSuffix: true})}
+                                </time>
+                            </span>
+                        </li>
                         <li><IconComment /> <span>{numberOfComments}</span></li>
                     </DetailCardFooter>
                 </div>

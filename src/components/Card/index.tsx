@@ -1,4 +1,7 @@
-import { CardContainer, CardHeaderContainer, CardTextContainer } from "./styles";
+import { CardContainer, CardHeaderContainer, CardTextContainer } from './styles'
+import { formatDistanceToNow, formatRFC7231 } from 'date-fns'
+import { ptBR } from 'date-fns/locale/pt-BR'
+
 
 interface CardProps {
     title: string,
@@ -11,7 +14,12 @@ export function Card({title, content, date}: CardProps) {
         <CardContainer>
             <CardHeaderContainer>
                 <h1>{title}</h1>
-                <h2>{date.toISOString()}</h2>
+                <h2>
+                    <time dateTime={date.toISOString()} 
+                          title={formatRFC7231(date)}>
+                        {formatDistanceToNow(date, {addSuffix: true, locale: ptBR})}
+                    </time>
+                </h2>
             </CardHeaderContainer>
 
             <CardTextContainer>
