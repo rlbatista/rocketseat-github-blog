@@ -6,10 +6,12 @@ import { AnimatedLink } from '../../components/AnimatedLink'
 import { Card } from '../../components/Card'
 import { useEffect, useState } from 'react'
 import { gitHubApi, GithubIssuesItem, GithubProfile } from '../../lib/api'
+import { useForm } from 'react-hook-form'
 
 export function Home() {
     const [ profile, setProfile ] = useState<GithubProfile>({} as GithubProfile)
     const [ issues, setIssues ] = useState<GithubIssuesItem[]>([] as GithubIssuesItem[])
+    const { register, handleSubmit } = useForm<FormData>()
 
     async function loadProfile() {
         const profileData = await gitHubApi.getProfile()
@@ -28,8 +30,8 @@ export function Home() {
         setProfile(newGithubProfile)
     }
 
-    async function loadIssues() {
-        const issuesData = await gitHubApi.getIssues()
+    async function loadIssues(searchTerm?: string) {
+        const issuesData = await gitHubApi.getIssues(searchTerm)
         const items = issuesData.items.map(issue => {
             return {
                 title: issue.title,
@@ -52,6 +54,14 @@ export function Home() {
 
         return `${n} publicações`
     })(issues.length)
+
+    type FormData = {
+        searchTerm: string
+    }
+    
+    function onFilterIssue(data: FormData) {
+        loadIssues(data.searchTerm)
+    }
 
     useEffect(() => {
         loadProfile()
@@ -95,7 +105,10 @@ export function Home() {
                     <h2>Publicações</h2>
                     <span>{numberOfPublications}</span>
                 </div>
-                <input type="text" placeholder='Buscar Conteúdo'/>
+
+                <form onSubmit={handleSubmit(onFilterIssue)}>
+                    <input type="text" placeholder='Buscar Conteúdo' {...register('searchTerm')} />
+                </form>
             </SearchHeaderContainer>
 
             <PostContainer>
