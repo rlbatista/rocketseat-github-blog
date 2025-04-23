@@ -6,7 +6,7 @@ export const DetailCardContainer = styled.div`
     padding: 2rem;
     background-color: ${props => props.theme.colorBaseProfile};
     border-radius: 10px;
-    transform: translateY(-42%);
+    margin-top: -10%;
     box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
 `
 
@@ -30,4 +30,9 @@ export const DetailCardFooter = styled.ul`
         display: flex;
         gap: 0.5rem;
     }
+`
+
+export const DetailContentContainer = styled.div`
+    width: 100%;
+    padding: 2.5rem 2rem;
 `
