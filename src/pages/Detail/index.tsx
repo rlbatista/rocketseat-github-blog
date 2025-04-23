@@ -4,6 +4,7 @@ import { IconCalendarDay, IconChevronLeft, IconComment, IconGithub, IconUpRight 
 import { Link, useParams } from "react-router-dom";
 import { gitHubApi, GithubIssuesItem } from "../../lib/api";
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 
 export function Detail() {
     const { number } = useParams()
@@ -85,7 +86,9 @@ export function Detail() {
             </DetailCardContainer>
 
             <DetailContentContainer>
-                {issue.body}
+                <Markdown>
+                    {issue.body}
+                </Markdown>
             </DetailContentContainer>
         </>
     )
