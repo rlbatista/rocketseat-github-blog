@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const DetailCardContainer = styled.div`
     width: 100%;
-    height: 10.5rem;
+    min-height: 10.5rem;
     padding: 2rem;
     background-color: ${props => props.theme.colorBaseProfile};
     border-radius: 10px;
